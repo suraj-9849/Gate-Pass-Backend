@@ -1,4 +1,18 @@
 {
+  "name": "gate-pass-backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "prebuild": "chmod +x ./scripts/build.sh",
+    "dev": "nodemon --exec ts-node --esm src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "prisma:generate": "npx prisma generate",
+    "prisma:push": "npx prisma db push",
+    "format": "prettier --write */**/*.{js,json,ts,md}",
+    "prepare": "husky install"
+  },
   "dependencies": {
     "@prisma/client": "^6.14.0",
     "bcrypt": "^6.0.0",
@@ -7,21 +21,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
-    "nodemon": "^3.1.10"
-  },
-  "name": "gate-pass-backend",
-  "version": "1.0.0",
-  "main": "app.js",
-  "type": "module",
-  "scripts": {
-    "prebuild": "chmod +x ./scripts/build.sh",
-    "build": "./scripts/build.sh",
-    "dev": "npm run build && nodemon --experimental-specifier-resolution=node dist/app.js",
-    "start": "node --experimental-specifier-resolution=nodemon dist/app.js",
-    "prisma:generate": "npx prisma generate",
-    "prisma:push": "npx prisma db push",
-    "format": "prettier --write */**/*.{js,json,ts,md}",
-    "prepare": "husky install"
+    "nodemon": "^3.1.10",
+    "tsc-node": "^0.0.3"
   },
   "keywords": [],
   "author": "",

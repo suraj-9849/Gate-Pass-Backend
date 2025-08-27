@@ -32,6 +32,9 @@ importers:
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
+      tsc-node:
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.1
@@ -2083,6 +2086,9 @@ packages:
       '@swc/wasm':
         optional: true
 
+  tsc-node@0.0.3:
+    resolution: {integrity: sha512-cCfkuHFGRUS5afZhabC9a8KEY1KD2X85KmXUu20HUUFXzJMHGfUvc6t++sy9p02dAscZsNfxKcUVbFLhTltTcA==}
+
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
 
@@ -2112,6 +2118,11 @@ packages:
   typed-array-length@1.0.7:
     resolution: {integrity: sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg==}
     engines: {node: '>= 0.4'}
+
+  typescript@2.9.2:
+    resolution: {integrity: sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
 
   typescript@5.9.2:
     resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
@@ -4396,6 +4407,10 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
+  tsc-node@0.0.3:
+    dependencies:
+      typescript: 2.9.2
+
   tsconfig-paths@3.15.0:
     dependencies:
       '@types/json5': 0.0.29
@@ -4448,6 +4463,8 @@ snapshots:
       is-typed-array: 1.1.15
       possible-typed-array-names: 1.1.0
       reflect.getprototypeof: 1.0.10
+
+  typescript@2.9.2: {}
 
   typescript@5.9.2: {}
 
