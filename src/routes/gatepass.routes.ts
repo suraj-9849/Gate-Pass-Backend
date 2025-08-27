@@ -30,4 +30,4 @@ router.get(
   gatePassController.getTeacherPendingApprovals
 );
 
-export const gatePassRoutes = router;
+export const gatePassRoutes:Router = router;

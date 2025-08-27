@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -15,45 +12,60 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
-  name          String
-  password      String
-  role          UserRole   @default(STUDENT)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  isApproved    Boolean    @default(false)
-  requestsSent  GatePass[] @relation("StudentRequests")
+  id              String     @id @default(cuid())
+  email           String     @unique
+  name            String     @db.VarChar(100)
+  password        String     
+  role            UserRole   @default(STUDENT)
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  isApproved      Boolean    @default(false) @map("is_approved")
+  requestsSent    GatePass[] @relation("StudentRequests")
   requestsApproved GatePass[] @relation("TeacherApprovals")
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
 }
 
 model GatePass {
-  id          String    @id @default(cuid())
-  studentId   String    
-  teacherId   String?   
-  reason      String
-  status      PassStatus @default(PENDING)
-  remarks     String?
-  requestDate DateTime
-  validUntil  DateTime
-  qrCode      String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  student     User      @relation("StudentRequests", fields: [studentId], references: [id])
-  teacher     User?     @relation("TeacherApprovals", fields: [teacherId], references: [id])
+  id          String      @id @default(cuid())
+  studentId   String      @map("student_id")
+  teacherId   String?     @map("teacher_id")
+  reason      String      @db.Text
+  status      PassStatus  @default(PENDING)
+  remarks     String?     @db.Text
+  requestDate DateTime    @map("request_date")
+  validUntil  DateTime    @map("valid_until")
+  qrCode      String?     @map("qr_code") @db.VarChar(255)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  
+  student     User        @relation("StudentRequests", fields: [studentId], references: [id], onDelete: Cascade)
+  teacher     User?       @relation("TeacherApprovals", fields: [teacherId], references: [id], onDelete: SetNull)
+
+  @@index([studentId])
+  @@index([teacherId])
+  @@index([status])
+  @@index([validUntil])
+  @@map("gate_passes")
 }
 
 enum UserRole {
-  SUPER_ADMIN
-  TEACHER
-  STUDENT
-  SECURITY
+  SUPER_ADMIN @map("super_admin")
+  TEACHER     @map("teacher")
+  STUDENT     @map("student")
+  SECURITY    @map("security")
+
+  @@map("user_roles")
 }
 
 enum PassStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  USED
-  EXPIRED
+  PENDING   @map("pending")
+  APPROVED  @map("approved")
+  REJECTED  @map("rejected")
+  USED      @map("used")
+  EXPIRED   @map("expired")
+
+  @@map("pass_statuses")
 }

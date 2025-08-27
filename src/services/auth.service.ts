@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client.js';
+import { PrismaClient, UserRole } from '../generated/prisma/client.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -9,7 +9,7 @@ class AuthService {
     email: string;
     password: string;
     name: string;
-    role: string;
+    role: UserRole;
   }) {
     const existingUser = await prisma.user.findUnique({
       where: { email: userData.email },

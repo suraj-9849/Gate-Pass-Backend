@@ -14,4 +14,4 @@ router.get('/teachers', adminController.getAllTeachers);
 router.post('/teachers/:teacherId/approve', adminController.approveTeacher);
 router.post('/teachers/:teacherId/reject', adminController.rejectTeacher);
 
-export const adminRoutes = router;
+export const adminRoutes:Router = router;
