@@ -59,35 +59,35 @@ class AuthService {
   }
 
   async createSuperAdmin(email: string, password: string, name: string) {
-  const existingSuperAdmin = await prisma.user.findFirst({
-    where: { role: 'SUPER_ADMIN' },
-  });
+    const existingSuperAdmin = await prisma.user.findFirst({
+      where: { role: 'SUPER_ADMIN' },
+    });
 
-  if (existingSuperAdmin) {
-    throw new Error('Super Admin already exists');
+    if (existingSuperAdmin) {
+      throw new Error('Super Admin already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const superAdmin = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        role: 'SUPER_ADMIN',
+        isApproved: true,
+      },
+    });
+
+    const token = this.generateToken(superAdmin);
+    return { user: superAdmin, token };
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const superAdmin = await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-      name,
-      role: 'SUPER_ADMIN',
-      isApproved: true,
-    },
-  });
-
-  const token = this.generateToken(superAdmin);
-  return { user: superAdmin, token };
-}
 
   private generateToken(user: any) {
     return jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: '24h' }
+      { expiresIn: '24h' },
     );
   }
 }

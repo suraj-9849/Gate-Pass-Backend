@@ -17,7 +17,11 @@ class GatePassService {
     });
   }
 
-  async approveGatePass(gatePassId: string, teacherId: string, remarks: string) {
+  async approveGatePass(
+    gatePassId: string,
+    teacherId: string,
+    remarks: string,
+  ) {
     const gatePass = await prisma.gatePass.findUnique({
       where: { id: gatePassId },
     });

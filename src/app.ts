@@ -8,7 +8,7 @@ import { adminRoutes } from './routes/admin.routes';
 
 dotenv.config();
 
-const app:Express = express();
+const app: Express = express();
 
 // Middleware
 app.use(cors());

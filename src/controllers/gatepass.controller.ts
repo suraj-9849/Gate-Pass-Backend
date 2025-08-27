@@ -5,7 +5,7 @@ import type { RequestWithUser } from '../types/index.js';
 export class GatePassController {
   async createGatePass(req: RequestWithUser, res: Response) {
     try {
-      const { reason, requestDate, validUntil }:any = req.body;
+      const { reason, requestDate, validUntil }: any = req.body;
       const studentId = req.user?.id;
 
       if (!studentId) {
@@ -28,7 +28,7 @@ export class GatePassController {
   async approveGatePass(req: RequestWithUser, res: Response) {
     try {
       const { gatePassId } = req.params;
-      const { remarks }:any = req.body;
+      const { remarks }: any = req.body;
       const teacherId = req.user?.id;
 
       if (!teacherId) {
@@ -38,7 +38,7 @@ export class GatePassController {
       const gatePass = await gatePassService.approveGatePass(
         gatePassId,
         teacherId,
-        remarks
+        remarks,
       );
 
       res.json(gatePass);
@@ -70,7 +70,8 @@ export class GatePassController {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
-      const passes = await gatePassService.getTeacherPendingApprovals(teacherId);
+      const passes =
+        await gatePassService.getTeacherPendingApprovals(teacherId);
       res.json(passes);
     } catch (error: any) {
       res.status(400).json({ message: error.message });

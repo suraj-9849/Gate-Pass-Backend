@@ -2,7 +2,11 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import type { UserPayload, RequestWithUser } from '../types/index.js';
 
-export const authMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const authMiddleware = (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 

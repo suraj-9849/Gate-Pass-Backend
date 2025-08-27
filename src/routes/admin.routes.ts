@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { adminController } from '../controllers/admin.controller.js';
-import { authMiddleware, roleMiddleware } from '../middlewares/auth.middleware.js';
+import {
+  authMiddleware,
+  roleMiddleware,
+} from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -14,4 +17,4 @@ router.get('/teachers', adminController.getAllTeachers);
 router.post('/teachers/:teacherId/approve', adminController.approveTeacher);
 router.post('/teachers/:teacherId/reject', adminController.rejectTeacher);
 
-export const adminRoutes:Router = router;
+export const adminRoutes: Router = router;

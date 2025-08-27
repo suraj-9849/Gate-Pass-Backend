@@ -8,7 +8,7 @@ async function createSuperAdmin() {
     const result = await authService.createSuperAdmin(
       'admin@gatepass.com',
       'SuperSecurePassword123!',
-      'Super Admin'
+      'Super Admin',
     );
     console.log('Super Admin created successfully:', result.user);
   } catch (error) {

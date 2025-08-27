@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { gatePassController } from '../controllers/gatepass.controller.js';
-import { authMiddleware, roleMiddleware } from '../middlewares/auth.middleware.js';
+import {
+  authMiddleware,
+  roleMiddleware,
+} from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -10,24 +13,24 @@ router.use(authMiddleware);
 router.post(
   '/request',
   roleMiddleware(['STUDENT']),
-  gatePassController.createGatePass
+  gatePassController.createGatePass,
 );
 router.get(
   '/student/passes',
   roleMiddleware(['STUDENT']),
-  gatePassController.getStudentPasses
+  gatePassController.getStudentPasses,
 );
 
 // Teacher routes
 router.post(
   '/approve/:gatePassId',
   roleMiddleware(['TEACHER']),
-  gatePassController.approveGatePass
+  gatePassController.approveGatePass,
 );
 router.get(
   '/teacher/pending',
   roleMiddleware(['TEACHER']),
-  gatePassController.getTeacherPendingApprovals
+  gatePassController.getTeacherPendingApprovals,
 );
 
-export const gatePassRoutes:Router = router;
+export const gatePassRoutes: Router = router;
