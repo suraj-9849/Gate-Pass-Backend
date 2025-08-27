@@ -21,6 +21,7 @@ model User {
   isApproved      Boolean    @default(false) @map("is_approved")
   requestsSent    GatePass[] @relation("StudentRequests")
   requestsApproved GatePass[] @relation("TeacherApprovals")
+  scanLogs        ScanLog[]  @relation("SecurityScans")
 
   @@index([email])
   @@index([role])
@@ -37,17 +38,35 @@ model GatePass {
   requestDate DateTime    @map("request_date")
   validUntil  DateTime    @map("valid_until")
   qrCode      String?     @map("qr_code") @db.VarChar(255)
+  usedAt      DateTime?   @map("used_at")
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
   
   student     User        @relation("StudentRequests", fields: [studentId], references: [id], onDelete: Cascade)
   teacher     User?       @relation("TeacherApprovals", fields: [teacherId], references: [id], onDelete: SetNull)
+  scanLogs    ScanLog[]
 
   @@index([studentId])
   @@index([teacherId])
   @@index([status])
   @@index([validUntil])
+  @@index([qrCode])
   @@map("gate_passes")
+}
+
+model ScanLog {
+  id         String   @id @default(cuid())
+  gatePassId String   @map("gate_pass_id")
+  securityId String   @map("security_id")
+  scannedAt  DateTime @map("scanned_at") @default(now())
+  
+  gatePass   GatePass @relation(fields: [gatePassId], references: [id], onDelete: Cascade)
+  security   User     @relation("SecurityScans", fields: [securityId], references: [id], onDelete: Cascade)
+
+  @@index([gatePassId])
+  @@index([securityId])
+  @@index([scannedAt])
+  @@map("scan_logs")
 }
 
 enum UserRole {

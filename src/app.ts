@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import { authRoutes } from './routes/auth.routes.js';
 import { gatePassRoutes } from './routes/gatepass.routes.js';
 import { adminRoutes } from './routes/admin.routes.js';
+import { securityRoutes } from './routes/security.routes.js';
+import { studentRoutes } from './routes/student.routes.js';
 
 dotenv.config();
 
@@ -52,6 +54,8 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes as Router);
 app.use('/api/gate-pass', gatePassRoutes as Router);
 app.use('/api/admin', adminRoutes as Router);
+app.use('/api/security', securityRoutes as Router);
+app.use('/api/students', studentRoutes as Router);
 
 // Error handling
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {

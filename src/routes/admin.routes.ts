@@ -6,8 +6,6 @@ import {
 } from '../middlewares/auth.middleware.js';
 
 const router = Router();
-
-// All routes require authentication and SUPER_ADMIN role
 router.use(authMiddleware);
 router.use(roleMiddleware(['SUPER_ADMIN']));
 
@@ -16,5 +14,6 @@ router.get('/teachers/pending', adminController.getPendingTeachers);
 router.get('/teachers', adminController.getAllTeachers);
 router.post('/teachers/:teacherId/approve', adminController.approveTeacher);
 router.post('/teachers/:teacherId/reject', adminController.rejectTeacher);
+router.patch('/users/:userId/role', adminController.changeUserRole);
 
 export const adminRoutes: Router = router;
