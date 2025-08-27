@@ -1,4 +1,5 @@
-import { PrismaClient, UserRole } from '../generated/prisma/client.js';
+import { UserRole } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 

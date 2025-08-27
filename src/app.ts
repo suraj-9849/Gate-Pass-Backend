@@ -2,9 +2,9 @@ import express, { Router } from 'express';
 import cors from 'cors';
 import { Express } from 'express';
 import dotenv from 'dotenv';
-import { authRoutes } from './routes/auth.routes';
-import { gatePassRoutes } from './routes/gatepass.routes';
-import { adminRoutes } from './routes/admin.routes';
+import { authRoutes } from './routes/auth.routes.js';
+import { gatePassRoutes } from './routes/gatepass.routes.js';
+import { adminRoutes } from './routes/admin.routes.js';
 
 dotenv.config();
 

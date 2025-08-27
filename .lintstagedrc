@@ -1,10 +1,10 @@
 {
-    "*/**/*.{js,jsx,ts,tsx}": [
+    "*/**/*.{js,ts}": [
         "prettier --write",
         "eslint --fix",
         "eslint"
     ],
-    "*/**/*.{json,css,md}": [
+    "*/**/*.{json,md}": [
         "prettier --write"
     ]
 }

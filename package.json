@@ -6,15 +6,21 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.0"
+    "mongoose": "^8.18.0",
+    "nodemon": "^3.1.10"
   },
   "name": "gate-pass-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write */**/*.{js,jsx,json,ts,tsx,scss,css,md}",
+    "prebuild": "chmod +x ./scripts/build.sh",
+    "build": "./scripts/build.sh",
+    "dev": "npm run build && nodemon --experimental-specifier-resolution=node dist/app.js",
+    "start": "node --experimental-specifier-resolution=nodemon dist/app.js",
+    "prisma:generate": "npx prisma generate",
+    "prisma:push": "npx prisma db push",
+    "format": "prettier --write */**/*.{js,json,ts,md}",
     "prepare": "husky install"
   },
   "keywords": [],
