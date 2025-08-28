@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "prebuild": "chmod +x ./scripts/build.sh",
-    "dev": "nodemon --exec ts-node --esm src/app.ts",
+    "dev": "tsc && node dist/app.js",
     "build": "tsc",
     "start": "node dist/app.js",
     "prisma:generate": "npx prisma generate",
