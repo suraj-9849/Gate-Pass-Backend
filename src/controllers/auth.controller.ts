@@ -4,12 +4,12 @@ import { authService } from '../services/auth.service.js';
 export class AuthController {
   async register(req: Request, res: Response) {
     try {
-      const { email, password, name, role } = req.body;
+      const { email, password, name } = req.body;
       const result = await authService.registerUser({
         email,
         password,
         name,
-        role,
+        role: 'STUDENT',
       });
 
       res.status(201).json({

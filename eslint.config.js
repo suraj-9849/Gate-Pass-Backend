@@ -4,7 +4,14 @@ import typescriptPlugin from "@typescript-eslint/eslint-plugin";
 export default [
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
-    ignores: ["node_modules/", "dist/", "build/", ".git/"],
+    ignores: [
+      "node_modules/",
+      "dist/",
+      "build/",
+      ".git/",
+      "src/scripts/reset-admin-password.js",
+      "src/scripts/create-super-admin.js",
+    ],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",

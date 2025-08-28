@@ -1,5 +1,5 @@
 import type { Request } from 'express';
-import { UserRole } from '../generated/prisma/client.js';
+import { UserRole } from '@prisma/client';
 
 export interface UserPayload {
   id: string;

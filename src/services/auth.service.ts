@@ -26,7 +26,7 @@ class AuthService {
       data: {
         ...userData,
         password: hashedPassword,
-        isApproved: userData.role === 'STUDENT',
+        isApproved: true,
       },
     });
 
@@ -49,11 +49,6 @@ class AuthService {
     if (!validPassword) {
       throw new Error('Invalid password');
     }
-
-    if (!user.isApproved && user.role !== 'STUDENT') {
-      throw new Error('Account pending approval');
-    }
-
     const token = this.generateToken(user);
 
     return { user, token };

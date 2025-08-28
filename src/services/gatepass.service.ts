@@ -10,7 +10,6 @@ class GatePassService {
     requestDate: Date;
     validUntil: Date;
   }) {
-    // Verify the teacher exists and is approved
     const teacher = await prisma.user.findFirst({
       where: {
         id: data.teacherId,
@@ -31,6 +30,7 @@ class GatePassService {
         requestDate: data.requestDate,
         validUntil: data.validUntil,
         status: 'PENDING',
+        remarks: '', // Provide empty string for initial request
       },
       include: {
         teacher: {
@@ -65,6 +65,11 @@ class GatePassService {
       throw new Error('You are not authorized to approve this gate pass');
     }
 
+    // Require remarks when approving
+    if (!remarks || remarks.trim() === '') {
+      throw new Error('Remarks are required when approving a gate pass');
+    }
+
     // Generate QR code
     const qrCode = `GP-${gatePassId}-${Date.now()}`;
 
@@ -72,7 +77,7 @@ class GatePassService {
       where: { id: gatePassId },
       data: {
         status: 'APPROVED',
-        remarks,
+        remarks: remarks.trim(),
         qrCode,
       },
       include: {
@@ -114,11 +119,16 @@ class GatePassService {
       throw new Error('You are not authorized to reject this gate pass');
     }
 
+    // Require remarks when rejecting
+    if (!remarks || remarks.trim() === '') {
+      throw new Error('Remarks are required when rejecting a gate pass');
+    }
+
     return await prisma.gatePass.update({
       where: { id: gatePassId },
       data: {
         status: 'REJECTED',
-        remarks,
+        remarks: remarks.trim(),
       },
       include: {
         student: {
