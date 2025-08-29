@@ -1,5 +1,3 @@
-// src/services/admin.service.ts - Complete implementation
-
 import { PrismaClient, UserRole } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -119,17 +117,21 @@ class AdminService {
     });
   }
 
-  // NEW METHOD: Get students who have been approved by teachers
+  // FIXED METHOD: Get students who have been approved by teachers
   async getStudentsApprovalStats() {
     console.log('Getting students approval stats...');
 
     try {
-      // First, let's get all students who have gate pass requests
+      // Get all students who have gate pass requests with their approving teachers
       const studentsWithRequests = await prisma.user.findMany({
         where: {
           role: 'STUDENT',
           requestsSent: {
-            some: {}, // Has at least one gate pass request
+            some: {
+              status: {
+                in: ['APPROVED', 'USED', 'EXPIRED'], // Only students with approved requests
+              },
+            },
           },
         },
         select: {
@@ -152,6 +154,9 @@ class AdminService {
                 },
               },
             },
+            orderBy: {
+              createdAt: 'desc',
+            },
           },
         },
         orderBy: {
@@ -160,7 +165,7 @@ class AdminService {
       });
 
       console.log(
-        `Found ${studentsWithRequests.length} students with requests`,
+        `Found ${studentsWithRequests.length} students with approved requests`,
       );
 
       // Transform the data to include statistics
@@ -179,21 +184,27 @@ class AdminService {
         ).length;
 
         // Get unique teachers who approved this student's requests
-        const approvingTeachers = Array.from(
-          new Set(
-            requests
-              .filter((req) =>
-                ['APPROVED', 'USED', 'EXPIRED'].includes(req.status),
-              )
-              .map((req) => req.teacher?.name)
-              .filter(Boolean),
-          ),
-        ) as string[];
+        const approvingTeachersSet = new Set<string>();
+        requests
+          .filter((req) => ['APPROVED', 'USED', 'EXPIRED'].includes(req.status))
+          .forEach((req) => {
+            if (req.teacher?.name) {
+              approvingTeachersSet.add(req.teacher.name);
+            }
+          });
+
+        const approvingTeachers = Array.from(approvingTeachersSet);
 
         const approvalRate =
           totalRequests > 0
             ? Math.round((approvedRequests / totalRequests) * 100)
             : 0;
+
+        // Log details for debugging
+        console.log(`Student: ${student.name}`);
+        console.log(`  Total Requests: ${totalRequests}`);
+        console.log(`  Approved: ${approvedRequests}`);
+        console.log(`  Approving Teachers: [${approvingTeachers.join(', ')}]`);
 
         return {
           id: student.id,
@@ -212,16 +223,11 @@ class AdminService {
         };
       });
 
-      // Filter to only include students with at least one approved request
-      const approvedStudents = studentsWithStats.filter(
-        (student) => student.stats.approvedRequests > 0,
-      );
-
       console.log(
-        `Returning ${approvedStudents.length} students with approved requests`,
+        `Returning ${studentsWithStats.length} students with complete approval stats`,
       );
 
-      return approvedStudents;
+      return studentsWithStats;
     } catch (error) {
       console.error('Error in getStudentsApprovalStats:', error);
       throw error;
@@ -259,15 +265,22 @@ class AdminService {
 
       console.log(`Found ${approvedStudents.length} approved students`);
 
-      // Add basic stats for each student
+      // Add detailed stats for each student
       const studentsWithStats = await Promise.all(
         approvedStudents.map(async (student) => {
           const requests = await prisma.gatePass.findMany({
             where: { studentId: student.id },
             include: {
               teacher: {
-                select: { name: true },
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
               },
+            },
+            orderBy: {
+              createdAt: 'desc',
             },
           });
 
@@ -282,24 +295,35 @@ class AdminService {
             (req) => req.status === 'REJECTED',
           ).length;
 
-          const approvingTeachers = Array.from(
-            new Set(
-              requests
-                .filter((req) =>
-                  ['APPROVED', 'USED', 'EXPIRED'].includes(req.status),
-                )
-                .map((req) => req.teacher?.name)
-                .filter(Boolean),
-            ),
-          ) as string[];
+          // Get unique approving teachers
+          const approvingTeachersSet = new Set<string>();
+          requests
+            .filter((req) =>
+              ['APPROVED', 'USED', 'EXPIRED'].includes(req.status),
+            )
+            .forEach((req) => {
+              if (req.teacher?.name) {
+                approvingTeachersSet.add(req.teacher.name);
+              }
+            });
+
+          const approvingTeachers = Array.from(approvingTeachersSet);
 
           const approvalRate =
             totalRequests > 0
               ? Math.round((approvedRequests / totalRequests) * 100)
               : 0;
 
+          console.log(
+            `Student: ${student.name} - Approved by: [${approvingTeachers.join(', ')}]`,
+          );
+
           return {
-            ...student,
+            id: student.id,
+            email: student.email,
+            name: student.name,
+            rollNo: student.rollNo,
+            createdAt: student.createdAt,
             stats: {
               totalRequests,
               approvedRequests,

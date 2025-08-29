@@ -1,44 +1,34 @@
-// src/controllers/admin.controller.ts - Add these methods
-
-import type { Request, Response } from 'express';
+import { Response } from 'express';
 import { adminService } from '../services/admin.service.js';
-import type { RequestWithUser } from '../types/index.js';
+import { RequestWithUser } from '@/types/index.js';
 
-export class AdminController {
-  // ... existing methods ...
-
+class AdminController {
   async getPendingTeachers(req: RequestWithUser, res: Response) {
     try {
-      const pendingTeachers = await adminService.getPendingTeacherApprovals();
-      res.json(pendingTeachers);
+      const teachers = await adminService.getPendingTeacherApprovals();
+      res.json(teachers);
     } catch (error: any) {
-      console.error('Error fetching pending teachers:', error);
-      res.status(400).json({
-        message: error.message || 'Failed to fetch pending teachers',
-      });
+      res.status(400).json({ message: error.message });
     }
   }
 
   async getAllTeachers(req: RequestWithUser, res: Response) {
     try {
-      const allUsers = await adminService.getAllTeachers();
-      res.json(allUsers);
+      const teachers = await adminService.getAllTeachers();
+      res.json(teachers);
     } catch (error: any) {
-      console.error('Error fetching all users:', error);
-      res.status(400).json({
-        message: error.message || 'Failed to fetch users',
-      });
+      res.status(400).json({ message: error.message });
     }
   }
 
   async approveTeacher(req: RequestWithUser, res: Response) {
     try {
       const { teacherId } = req.params;
-      const approvedTeacher = await adminService.approveTeacher(teacherId);
+      const teacher = await adminService.approveTeacher(teacherId);
 
       res.json({
         message: 'Teacher approved successfully',
-        data: approvedTeacher,
+        teacher,
       });
     } catch (error: any) {
       console.error('Error approving teacher:', error);
@@ -92,45 +82,39 @@ export class AdminController {
     }
   }
 
-  // NEW METHOD: Get students approval statistics
+  // FIXED METHOD: Get students approval statistics
   async getStudentsApprovalStats(req: RequestWithUser, res: Response) {
     try {
       console.log('Admin requesting students approval stats...');
 
-      // Try the main method first
       let studentsStats;
       try {
+        // Try the main method first
         studentsStats = await adminService.getStudentsApprovalStats();
+        console.log(
+          `Main method succeeded with ${studentsStats.length} students`,
+        );
       } catch (mainError) {
         console.log('Main method failed, trying simple method:', mainError);
         // Fallback to simple method
         studentsStats = await adminService.getSimpleApprovedStudents();
+        console.log(
+          `Simple method succeeded with ${studentsStats.length} students`,
+        );
       }
 
-      console.log(
-        `Returning ${studentsStats.length} students with approval stats`,
-      );
-
-      res.json({
-        message: 'Students approval statistics fetched successfully',
-        data: studentsStats,
-        count: studentsStats.length,
-      });
+      // Always return the data array directly for consistency
+      res.json(studentsStats);
     } catch (error: any) {
       console.error('Error fetching students approval stats:', error);
       console.error('Error stack:', error.stack);
 
       // Return empty array instead of error to prevent app crash
-      res.json({
-        message: 'No approved students found',
-        data: [],
-        count: 0,
-        error: error.message,
-      });
+      res.status(200).json([]);
     }
   }
 
-  // ALTERNATIVE METHOD: Get basic approved students
+  // FIXED ALTERNATIVE METHOD: Get basic approved students
   async getApprovedStudents(req: RequestWithUser, res: Response) {
     try {
       console.log('Admin requesting basic approved students...');
@@ -139,20 +123,14 @@ export class AdminController {
 
       console.log(`Returning ${approvedStudents.length} approved students`);
 
-      res.json({
-        message: 'Approved students fetched successfully',
-        data: approvedStudents,
-        count: approvedStudents.length,
-      });
+      // Return data array directly
+      res.json(approvedStudents);
     } catch (error: any) {
       console.error('Error fetching approved students:', error);
+      console.error('Error stack:', error.stack);
 
-      res.json({
-        message: 'No approved students found',
-        data: [],
-        count: 0,
-        error: error.message,
-      });
+      // Return empty array instead of error
+      res.status(200).json([]);
     }
   }
 }
