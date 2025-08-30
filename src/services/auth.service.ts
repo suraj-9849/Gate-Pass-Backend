@@ -2,6 +2,7 @@ import { UserRole } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { EmailValidator } from '../utils/email-validator.js';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,8 @@ class AuthService {
     name: string;
     role: UserRole;
   }) {
+    EmailValidator.validateEmail(userData.email);
+
     const existingUser = await prisma.user.findUnique({
       where: { email: userData.email },
     });
@@ -36,6 +39,8 @@ class AuthService {
   }
 
   async loginUser(email: string, password: string) {
+    EmailValidator.validateEmail(email);
+
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -55,6 +60,8 @@ class AuthService {
   }
 
   async createSuperAdmin(email: string, password: string, name: string) {
+    EmailValidator.validateEmail(email);
+
     const existingSuperAdmin = await prisma.user.findFirst({
       where: { role: 'SUPER_ADMIN' },
     });
